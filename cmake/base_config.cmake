@@ -104,8 +104,17 @@ if(WITH_COVERAGE)
 endif()
 
 # Determine number of processors for external builds
-include(ProcessorCount)
-ProcessorCount(N_PROC)
+# Marqov: respect an explicit resource limit for dependency builds.
+if(NOT DEFINED N_PROC)
+  include(ProcessorCount)
+  ProcessorCount(N_PROC)
+  if(NOT N_PROC)
+    set(N_PROC 1)
+  endif()
+endif()
+if(NOT "${N_PROC}" MATCHES "^[1-9][0-9]*$")
+  message(FATAL_ERROR "N_PROC must be a positive integer")
+endif()
 
 # Save the version numbers for use in the code.
 configure_file(cmake/cmake_variables.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/include/qristal/core/cmake_variables.hpp)
