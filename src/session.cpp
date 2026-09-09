@@ -1281,6 +1281,10 @@ namespace qristal
       auto buffer_qb = std::make_shared<xacc::AcceleratorBuffer>(qn);
       try {
         qb_transpiler->execute(buffer_qb, ir_target);
+      } catch (const std::exception& error) {
+        // Marqov: retain the underlying diagnostic for runtime qualification.
+        throw std::invalid_argument(
+            std::string("Transpiling to QB native gates for your input circuit failed: ") + error.what());
       } catch (...) {
         throw std::invalid_argument(
             "Transpiling to QB native gates for your input circuit failed");

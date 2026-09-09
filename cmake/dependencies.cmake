@@ -102,7 +102,10 @@ endif()
 message(STATUS "${BoldGreen}Eigen3: Found system installation (version ${EIGEN3_VERSION_STRING}) config at ${Eigen3_DIR}; include directory: ${EIGEN3_INCLUDE_DIR}${ColorReset}")
 
 # XACC
-set(XACC_TAG "01053824")
+# Marqov: allow explicitly pinned public upstream compatibility builds.
+set(XACC_TAG "01053824" CACHE STRING "XACC source revision")
+set(XACC_REPOSITORY "https://gitlab.com/qbau/software-and-apps/open-source/xacc.git" CACHE STRING "XACC source repository")
+option(WITH_TNQVM "Build and install ExaTN/TNQVM tensor-network backends" ON)
 if(CMAKE_BUILD_TYPE STREQUAL "None")
   set(XACC_CMAKE_BUILD_TYPE "Release")
 else()
@@ -111,7 +114,7 @@ endif()
 add_poorly_behaved_dependency(xacc 1.0.0
   FIND_PACKAGE_NAME XACC
   GIT_TAG ${XACC_TAG}
-  GIT_REPOSITORY https://gitlab.com/qbau/software-and-apps/open-source/xacc.git
+  GIT_REPOSITORY ${XACC_REPOSITORY}
   OPTIONS
     "-DXACC_ENABLE_MPI=${ENABLE_MPI_IN_DEPS}"
     "-DCOMPILE_FOR_LOCAL_ARCH=${COMPILE_FOR_LOCAL_ARCH}"
@@ -322,6 +325,7 @@ if (NOT SUPPORT_EMULATOR_BUILD_ONLY)
     # TODO (SWA-2341): sync packages installed here with those installed in the Qristal SDK image
   )
 
+  if(WITH_TNQVM)
   # Remove clang flags to compile exatn and tnqvm
   string(REPLACE "-fopenmp=libgomp" "-fopenmp" EXATN_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp=libgomp" "-fopenmp" EXATN_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -391,6 +395,8 @@ if (NOT SUPPORT_EMULATOR_BUILD_ONLY)
     endforeach()
     install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${lib} ${XACC_ROOT}/plugins/${filename})")
   endforeach()
+
+  endif()
 
   # CPR curl wrapper
   add_dependency(cpr 1.12.0
