@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.20)
+project(installed_core_consumer LANGUAGES CXX)
+find_package(qristal_core CONFIG REQUIRED)
+add_executable(core-consumer main.cpp)
+target_link_libraries(core-consumer PRIVATE qristal::core)

@@ -85,10 +85,10 @@ add_dependency(Eigen3 3.4.1
   PATCH_FILE ${CMAKE_CURRENT_LIST_DIR}/patches/eigen.patch
   DOWNLOAD_ONLY YES
 )
+set(Eigen3_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/eigen3)
 if(Eigen3_ADDED)
   # XACC and other poorly behaved deps depend on Eigen, and need it to be detectable already at cmake time via find_package().  CPM's default configuration of Eigen generates
   # an error when find_package() is called by XACC et al. So, download and manually configure/install it so that dependencies can locate it at cmake time via find_package().
-  set(Eigen3_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/eigen3)
   set(EIGEN3_INCLUDE_DIR ${Eigen3_INSTALL_DIR}/include/eigen3)
   set(Eigen3_DIR ${Eigen3_INSTALL_DIR}/share/eigen3/cmake)
   if(NOT EXISTS ${Eigen3_DIR}/Eigen3Config.cmake)
@@ -98,6 +98,14 @@ if(Eigen3_ADDED)
     execute_process(COMMAND ${CMAKE_COMMAND} -E rm -rf ${Eigen3_BINARY_DIR})
   endif()
   include(${Eigen3_DIR}/Eigen3Config.cmake)
+endif()
+# When Core acquired Eigen itself, ship that installation with the SDK.
+# Also detect cached reconfigurations where find_package found the local copy.
+set(QRISTAL_EIGEN3_CONFIG_DIR "${Eigen3_DIR}")
+if(Eigen3_DIR STREQUAL "${Eigen3_INSTALL_DIR}/share/eigen3/cmake")
+  install(DIRECTORY "${Eigen3_INSTALL_DIR}/"
+          DESTINATION "${CMAKE_INSTALL_PREFIX}/deps/eigen3")
+  set(QRISTAL_EIGEN3_CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/deps/eigen3/share/eigen3/cmake")
 endif()
 message(STATUS "${BoldGreen}Eigen3: Found system installation (version ${EIGEN3_VERSION_STRING}) config at ${Eigen3_DIR}; include directory: ${EIGEN3_INCLUDE_DIR}${ColorReset}")
 

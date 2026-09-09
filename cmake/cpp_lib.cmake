@@ -305,7 +305,7 @@ if(EXISTS ${XACC_EIGEN_PATH})
   file(APPEND ${outfile} "\nset(XACC_EIGEN_PATH ${XACC_DIR}/include/eigen)\
                           \nadd_eigen_from_xacc()")
 else()
-  file(APPEND ${outfile} "\nset(Eigen3_DIR ${Eigen3_DIR})\
+  file(APPEND ${outfile} "\nset(Eigen3_DIR ${QRISTAL_EIGEN3_CONFIG_DIR})\
                           \nfind_dependency(Eigen3 ${EIGEN3_VERSION_STRING})")
 endif()
 if (WITH_CUDAQ)
