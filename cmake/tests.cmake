@@ -208,3 +208,9 @@ if(WITH_MPI)
     GTest::gmock_main
   )
 endif()
+
+# Standalone score arithmetic regression checks: no simulator execution.
+add_executable(search_score_decoding tests/algorithms/exponential_search/ScoreDecodingStandalone.cpp)
+target_include_directories(search_score_decoding PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(search_score_decoding PRIVATE cxx_std_17)
+add_test(NAME search_score_decoding COMMAND search_score_decoding)

@@ -1,5 +1,6 @@
 // Copyright (c) Quantum Brilliance Pty Ltd
 #include <qristal/core/algorithms/exponential_search/exponential_search.hpp>
+#include <qristal/core/algorithms/exponential_search/score_decoding.hpp>
 #include <chrono>
 #include <ctime>
 //#include <memory>
@@ -296,17 +297,7 @@ void ExponentialSearch::execute(
     }
     std::string bitString_metric_msb =
         std::string(BitString_metric.rbegin(), BitString_metric.rend());
-    const int x_value_binary = atoi(
-        bitString_metric_msb.c_str());
-    int x_value = 0;
-    int base = 1;
-    int temp = x_value_binary;
-    while (temp) {
-      int last_digit = temp % 10;
-      temp /= 10;
-      x_value += last_digit * base;
-      base *= 2;
-    }
+    const int x_value = detail::decode_search_score(bitString_metric_msb);
 
     std::cout << "Measure: " << rawBitString
               << ", qubits_metric: " << BitString_metric

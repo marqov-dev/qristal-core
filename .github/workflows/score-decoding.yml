@@ -1,0 +1,17 @@
+name: Exponential search score decoding
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  standalone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Release arithmetic checks with sanitizers
+        run: |
+          g++ -std=c++17 -O1 -DNDEBUG -Wall -Wextra -Werror -fsanitize=address,undefined -Iinclude tests/algorithms/exponential_search/ScoreDecodingStandalone.cpp -o /tmp/search-score-checks
+          /tmp/search-score-checks
